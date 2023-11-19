@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -21,14 +22,31 @@ template<class T>
 void swap(vector<T> &v, const int first, const int second) {
     // {v.size() >0} => {permutation des valeurs de v aux indices first et second}
 
-
+    // Sauvegarde une des valeurs
+    T indexDeux = v[second];
+    // 2 -> 1
+    v[second] = v[first];
+    // 1 -> 2[s]
+    v[first] = indexDeux;
 }
 
 template<class T>
 T partage(vector<T> &v, const int inf, const int sup) {
 // {v.size()≥ 1} => {résultat = valeur du médian tel que défini dans l’étape 1)
 //                   et mise en place du plus petit et du plus grand dans v telles que définies dans l’étape 2)}
+    int midle = round((inf+sup) / 2);
 
+    int pivot = v[inf];
+    int leftwall = inf;
+
+    for (int i = inf + 1; i <= sup; i++){
+        if (v[i] < pivot){
+            swap(v, v[i], v[leftwall]);
+            leftwall += 1;
+        }
+    }
+    swap(v,pivot, v[leftwall]);
+    return leftwall;
 
 }
 
@@ -38,14 +56,20 @@ void insertionSort(vector<T> &a) {
 
 }
 
+template<class T>
+void triR302Worker(vector<T> &v, const int inf, const int sup) {
+
+    // Trouver le pivot qui serait le plus proche de la médianne du vecteur entier.
+    if (inf < sup){
+        int pivot_location = partage(v, inf, sup);
+    }
+
+}
 
 template<class T>
 void triR302(vector<T> &v, const int inf, const int sup) {
 
-    /*
-     * À COMPLETER
-     */
-
+    triR302Worker(v, inf, sup);
 }
 
 void testTriR302() {
