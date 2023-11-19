@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "R203\u2014TP0",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "exercice1::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-exercice1-Debug-de1b00587ca14c9b4746.json",
+					"name" : "exercice1",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "exercice2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-exercice2-Debug-7cbf3f5c7c77628ea320.json",
+					"name" : "exercice2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "exercice3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-exercice3-Debug-896d3c0032e9e02b8174.json",
+					"name" : "exercice3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "exercice4::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-exercice4-Debug-beb3044ac50443e89ba8.json",
+					"name" : "exercice4",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/theno/Desktop/Bureau/IUT 2/R3.02_Efficient_Dev/R203.TP0/cmake-build-debug",
+		"source" : "C:/Users/theno/Desktop/Bureau/IUT 2/R3.02_Efficient_Dev/R203.TP0"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
