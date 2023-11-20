@@ -272,17 +272,23 @@ bool ListeChainee<TypeInfo>::supprimeAtPositIter(int position) {
             else{
                 int posActuelle = 1;
                 // passé la tête à la cellule suivante
-                Cellule<TypeInfo> * TeteEnSuivante = ptrTete->getRefSuivante();
+                Cellule<TypeInfo> * TeteCourrant = ptrTete;
+                Cellule<TypeInfo> * TeteSuivante = ptrTete->getRefSuivante();
                 // change la position vers la cellule
-                while (ptrTete && posActuelle < position){
-                    TeteEnSuivante->getRefSuivante();
+                while (ptrTete && posActuelle < position-1){
+                    TeteCourrant = TeteCourrant->getRefSuivante();
+                    TeteSuivante = TeteSuivante->getRefSuivante();
                     posActuelle++;
                 }
 
-                if (TeteEnSuivante){
-                    ptrTete->setSuivante(TeteEnSuivante->getRefSuivante());
-                    supprimeTeteWorker( TeteEnSuivante);
+                // Si ce n'est pas le dernier élément de la liste.
+                if (TeteSuivante && position != nbCellules){
+                    ptrTete->setSuivante(TeteSuivante->getRefSuivante());
+                    supprimeTeteWorker( TeteSuivante);
                     return true;
+                } else { // Sinon enlever l'attache par la cellule avant la dernière.
+                    TeteCourrant->setSuivante(nullptr);
+                    delete(TeteSuivante);
                 }
             }
     }
@@ -381,7 +387,6 @@ void ListeChainee<TypeInfo>::supprimeAtPositRecWorker(Cellule<TypeInfo>*& ptrCet
 
     if (position == 1){
         supprimeTeteWorker(ptrCetteListe);
-        nbCellules--;
     }
     else{
         supprimeAtPositRecWorker(ptrCetteListe->getRefSuivante(), position-1);

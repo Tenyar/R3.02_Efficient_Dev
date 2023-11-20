@@ -231,7 +231,7 @@ void testeInsereAtPositIter() {
 int main() {
     //testeAffiche();
    // testeInsereAtPositRec();
-   // testeSupprimeAtPositRecAvecProc();
+   testeSupprimeAtPositRecAvecProc();
     //testeEstInfoPresentRec();
    // testeInsereAtPositIter();
     testeSupprimeAtPositIter();
