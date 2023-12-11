@@ -12,6 +12,7 @@
 #include <iomanip>      // pour setw()
 #include <sstream>
 #include <iterator>
+#include <string.h>
 
 Mondial::Mondial(const char* filename) {
     // Chargement du fichier XML en mémoire
@@ -252,12 +253,18 @@ int Mondial::getCountryPopulationFromName(string countryName) const {
  * A COMPLETER
  */
 XMLElement* Mondial::getCountryXmlelementFromCode(string countryCode) const {
-    /*
-     * A COMPLETER
-     */
-
-    // supprimer à partir d'ici après complétion
-    return nullptr;
+    // Accéder à la catégorie des pays pour ensuite la parcourir
+    XMLElement * nameCategory = racineMondial->FirstChildElement("countriescategory");
+    // Accéder au premier fils de la catégorie demandé <currentCategoryFils>.
+    XMLElement * currentPays = nameCategory->FirstChildElement();
+    // Parcourir tous les frères de la catégorie <currentCategoryFils>.
+    // Si toutefois aucun pays n'est retenus, sortir de la boucle (On vérifie en premier le pointeur).
+    while (currentPays != nullptr && currentPays->Attribute("car_code") != countryCode){ // tq on ne trouve pas à l'attribut 'car_code', 'car_code' == countryCode
+        // Avancer au frère suivant de currentCategoryFils.
+        currentPays = currentPays->NextSiblingElement();
+    }
+    // On retourne le pays recherché.
+    return currentPays;
 }
 
 /*
@@ -267,21 +274,62 @@ void Mondial::printCountryBorders(string countryName) const {
     /*
      * A TODO: prendre l'attribut "border" pour frontière.
      */
+    // Appel à une méthode déjà implémenter auparavant pour chercher le pays souhaité.
+    XMLElement * paysCible = getCountryXmlelementFromNameIter(countryName);
+    // Je cherche si ce pays existe
+    if (paysCible == nullptr){
+        cout << "Ce pays n'existe pas dans les données !" << endl;
+    } else if (paysCible->FirstChildElement("border") == nullptr){ // Si un pays à au moins un pays frontalier.
+        cout << "Ce pays ne contient pas de pays frontalier !" << endl;
+    } else {
 
-    // supprimer à partir d'ici après complétion
+        // Accéder au premier fils de la catégorie demandé <border> soit pays frontalier.
+        XMLElement * currentBoder = paysCible->FirstChildElement("border");
+        // Affichage du nom du pays ciblé.
+        cout << "Pays " << paysCible->FirstChildElement("name")->GetText() << " : " << endl;
+        // Parcourir tous les frères de la catégorie <border>.
+        // Itéré sur chaque pays frontalier, et afficher son pays ainsi que la longueur de sa frontière.
+        while (currentBoder != nullptr){
+            // On passe le "car_code" de chaque pays frontalier à la méthode
+            XMLElement * paysFrontalier = getCountryXmlelementFromCode(currentBoder->Attribute("country"));
+            // Afficher le nom du pays frontalier ainsi que sa longueur.
+            cout << " Frontière : " << paysFrontalier->FirstChildElement("name")->GetText()
+                 << " Longueur : "  <<  currentBoder->Attribute("length") << endl;
+            // Avancer au frère suivant de <border> ! pas d'autres tags disponibles.
+            currentBoder = currentBoder->NextSiblingElement("border");
+        }
+    }
+    // Ensuite un appel à la fonction qui permet de trouver le pays correspondant à un car_code
 }
 
 /*
  * A COMPLETER
  */
 XMLElement* Mondial::getRiverXmlelementFromNameIter(string riverName) const {
-    /*
-     * A COMPLETER
-     */
-    // supprimer à partir d'ici après complétion
-    return nullptr;
+    if (riverName.empty()) {
+        return nullptr;
+    } else {
+        // Accéder à la catégorie des pays pour ensuite la parcourir
+        XMLElement *nameCategory = racineMondial->FirstChildElement("riverscategory");
+        // Accéder au premier fils de la catégorie demandé <river>.
+        XMLElement *currentRiver = nameCategory->FirstChildElement();
+        /*
+            // Récupère le nom de la rivière/fleuve.
+            string parseRiverName = currentRiver->Attribute("id");
+            // Parse le nom de la rivière/fleuve (id) pour enlever "river-" et ne garder que le nom de la rivière/fleuve.
+            // On enlève toujours les 6 premiers caractères
+            parseRiverName = parseRiverName.erase(0,6);
+        */
+        // Parcourir tous les frères de la catégorie <currentCategoryFils>.
+        // Si toutefois aucune rivière/pays n'est retenus, sortir de la boucle.
+        while (currentRiver != nullptr && currentRiver->FirstChildElement("name")->GetText() != (riverName)) {
+            // Avancer au frère suivant de currentCategoryFils.
+            currentRiver = currentRiver->NextSiblingElement();
+        }
+        // On retourne le fleuve/rivière recherché.
+        return currentRiver;
+    }
 }
-
 /*
  * A COMPLETER
  */
@@ -289,15 +337,60 @@ void Mondial::printAllCountriesCrossedByRiver(string riverName) const {
     /*
      * A COMPLETER
      */
+    // On prend le fleuve demandé
+    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+        cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
+    } else {
+        cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
+                                      << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
+        // On prend tous les pays traversés par le fleuve
+        string countries = riverCible->Attribute("country");
+        // On transtype le string en un ptr de char. (char *)
+        char * riverNameChar = new char[countries.length()+1]; // +1 pour \0 à la fin du tableau de caractère.
+        // On affecte dans le tableau de caractère vide les pays traversés par le fleuve.
+        strcpy(riverNameChar, countries.c_str());
+        // Délimiteur 'bar espace'.
+        const char * delimiter = " ";
+        // On modifie le string originel en remplacent les espaces par des \0.
+        char * currentWords = strtok(riverNameChar, delimiter);
+        // Pour chaque mots dans le string on va chercher son pays et afficher sont nom
+        while (currentWords != nullptr) {
+            XMLElement * currentPaysFleuve = getCountryXmlelementFromCode(currentWords);
+            cout << currentPaysFleuve->FirstChildElement("name")->GetText() << endl;
+
+            currentWords = strtok(nullptr, delimiter); // Passe au prochain mots
+        }
+
+    }
 }
 
 /*
  * A COMPLETER
  */
 void Mondial::printCountriesWithProvincesCrossedByRiver(string riverName) const {
-    /*
-     * A COMPLETER
-     */
+    // On prend le fleuve demandé
+    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+        cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
+    } else {
+        cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
+             << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
+        // On prend le 1er élément de la série <located>
+        XMLElement * currentLocated = riverCible->FirstChildElement("located");
+        // Si le fleuve ne traverse aucun pays.
+        if (currentLocated == nullptr){
+            cout << "Ce fleuve ne traverse aucun pays." << endl;
+        } else {
+            while (currentLocated != nullptr){
+                // Cherché le pays provenant du car_code de <country> contenu dans le <located> où on est à ce moment.
+                XMLElement * currentPaysLocated = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
+                cout << currentPaysLocated->FirstChildElement("name")->GetText() << endl;
+                // On passe au prochain
+                currentLocated = currentLocated->NextSiblingElement("located");
+            }
+        }
+    }
 }
 
 /*
@@ -307,6 +400,54 @@ void Mondial::printCountriesAndProvincesCrossedByRiver(string riverName) const {
     /*
      * A COMPLETER
      */
+    // On prend le fleuve demandé
+    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+        cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
+    } else {
+        cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
+             << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
+        // On prend le 1er élément de la série <located>
+        XMLElement * currentLocated = riverCible->FirstChildElement("located");
+        // Si le fleuve ne traverse aucun pays.
+        if (currentLocated == nullptr){
+            cout << "Ce fleuve ne traverse aucun pays." << endl;
+        } else {
+            while (currentLocated != nullptr){
+                // Cherché le pays provenant du car_code de <country> contenu dans le <located> où on est à ce moment.
+                XMLElement * currentPaysLocated = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
+                cout << currentPaysLocated->FirstChildElement("name")->GetText() << endl;
+                     //<< "\t Province traversé par le fleuve : " << currentLocated->Attribute("province") << endl;
+
+
+                // On prend tous les pays traversés par le fleuve
+                string provinces = currentLocated->Attribute("province");
+                // On transtype le string en un ptr de char. (char *)
+                char * provinceChar = new char[provinces.length()+1]; // +1 pour \0 à la fin du tableau de caractère.
+                // On affecte dans le tableau de caractère vide les pays traversés par le fleuve.
+                strcpy(provinceChar, provinces.c_str());
+                // Délimiteur 'bar espace'.
+                const char * delimiter = " ";
+                // On modifie le string originel en remplacent les espaces par des \0.
+                char * currentProvince = strtok(provinceChar, delimiter);
+                // Pour chaque province on va chercher s'il est traversé par le fleuve
+                while (currentProvince != nullptr) {
+                    // Cherche le pays d'un <located> via car_code
+                    XMLElement * currentPaysFromProvinceFleuve = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
+                    XMLElement * currentProvinceFromPays = currentPaysFromProvinceFleuve->FirstChildElement("province");
+                   while (currentProvinceFromPays != nullptr){
+                        if (strcmp(currentProvinceFromPays->Attribute("id"), currentProvince) == 0){
+                            cout << "\t ->Province traversé par le fleuve : " << currentProvinceFromPays->Attribute("id") << endl;
+                        }
+                        currentProvinceFromPays = currentProvinceFromPays->NextSiblingElement("province");
+                    }
+                   currentProvince = strtok(nullptr, delimiter); // Passe à la prochaine province
+                }
+                // On passe au prochain
+                currentLocated = currentLocated->NextSiblingElement("located");
+            }
+        }
+    }
 }
 
 /*

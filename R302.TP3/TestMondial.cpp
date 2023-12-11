@@ -207,23 +207,23 @@ int main() {
     //Mondial theMondial("/Users/hb/Documents/ Enseignement/R3.02/TP_Sols/R302-TP3-Correction-compile/mondial_HB.xml");
 
     // pour les étudiants
-    Mondial theMondial("/users/info/pub/s3/R302/mondial_HB.xml");
+    Mondial theMondial("C:/Users/theno/Desktop/Bureau/IUT 2/R3.02_Efficient_Dev/mondial_HB.xml");
 
     // autre, mettre votre chemin d'accès au fichier XML
     // Mondial theMondial("/MON_CHEMIN_D_ACCES/mondial_HB.xml");
 
     //theMondial.Print();
 
-    testGetNbAirports(theMondial);
-    testPrintCodesPays(theMondial);
-    testGetNbDeserts(theMondial);
-    testgetNbElemCat(theMondial);
-    testGetCountryCodeFromName(theMondial);
-    testGetCountryPopulationFromName(theMondial);
+    //testGetNbAirports(theMondial);
+    //testPrintCodesPays(theMondial);
+    //testGetNbDeserts(theMondial);
+    //testgetNbElemCat(theMondial);
+    //testGetCountryCodeFromName(theMondial);
+    //testGetCountryPopulationFromName(theMondial);
     //testPrintCountryBorders(theMondial);
     //testPrintAllCountriesCrossedByRiver(theMondial);
     //testPrintCountriesWithProvincesCrossedByRiver(theMondial);
-    //testPrintCountriesAndProvincesCrossedByRiver(theMondial);
+    testPrintCountriesAndProvincesCrossedByRiver(theMondial);
     //testPrintCityInformation(theMondial);
 
     //theMondial.printIslandsInformations();
