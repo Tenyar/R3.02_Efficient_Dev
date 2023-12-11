@@ -14,7 +14,7 @@
 #include <iterator>
 #include <string.h>
 
-Mondial::Mondial(const char* filename) {
+Mondial::Mondial(const char *filename) {
     // Chargement du fichier XML en mémoire
     imageMondial.LoadFile(filename);
     // Initialisation de l'attribut racineMondial avec la racine (élément <mondial>)
@@ -32,10 +32,10 @@ int Mondial::getNbAirports() const {
     // initialisation du nombre d’aéroports
     int nb = 0;
     // accéder à <airportscategory>, c’est un fils de l'élément <racineMondial>
-    XMLElement* airportsCategory = racineMondial->FirstChildElement("airportscategory");
+    XMLElement *airportsCategory = racineMondial->FirstChildElement("airportscategory");
     // parcours complet des fils de <airportscategory> en les comptants
     // 1) accéder au premier fils <airport> de <airportscategory>
-    XMLElement* currentAirport = airportsCategory->FirstChildElement();
+    XMLElement *currentAirport = airportsCategory->FirstChildElement();
     // 2) parcourir tous les <airport> qui sont des frères
     while (currentAirport != nullptr) {
         // un aéroport supplémentaire
@@ -54,10 +54,10 @@ void Mondial::printCountriesCode() const {
     int rank = 1; // rang du pays
     string carcodeValue; // valeur de l'attribut "car_cod" du pays courant
     // accéder à <countriescategory>, c’est un fils de l'élément <racineMondial>)
-    XMLElement* countriesCategory = racineMondial->FirstChildElement("countriescategory");
+    XMLElement *countriesCategory = racineMondial->FirstChildElement("countriescategory");
     // parcours complet des fils de <countriescategory> en affichant le rang et le code
     // 1) accéder au premier fils <country> de <countriescategory>
-    XMLElement* currentCountry = countriesCategory->FirstChildElement();
+    XMLElement *currentCountry = countriesCategory->FirstChildElement();
     // 2) parcourir tous les <country> qui sont des frères
     while (currentCountry != nullptr) {
         // traiter le pays courant
@@ -81,10 +81,10 @@ int Mondial::getNbDeserts() const {
     // initialisation du nombre de déserts
     int nb = 0;
     // accéder à <desertcategory>, c’est un fils de l'élément <racineMondial>
-    XMLElement* desertCategory = racineMondial->FirstChildElement("desertscategory");
+    XMLElement *desertCategory = racineMondial->FirstChildElement("desertscategory");
     // parcours complet des fils de <desertscategory> en les comptants
     // 1) accéder au premier fils <desert> de <desertscategory>
-    XMLElement* currentDesert = desertCategory->FirstChildElement();
+    XMLElement *currentDesert = desertCategory->FirstChildElement();
     // 2) parcourir tous les <deserts> qui sont des frères
     while (currentDesert != nullptr) {
         // un déserts supplémentaire
@@ -107,11 +107,11 @@ int Mondial::getNbElemCat(const string categoryName) {
     // Accéder à <nameCategory>, c'est un fils de l'élément mondial => <racineMondial> si il est trouvé dans le dictionnaire.
     // Utilisation du dictionnaire "decode_category" pour utiliser le nom d'une des catégories passé en paramètre.
     // puis "c_str()" pour convertir string en char *.
-    XMLElement * nameCategory = racineMondial->FirstChildElement(decod_category[categoryName].c_str());
+    XMLElement *nameCategory = racineMondial->FirstChildElement(decod_category[categoryName].c_str());
     // Accéder au premier fils de la catégorie demandé <currentCategoryFils>.
-    XMLElement * currentCategoryFils = nameCategory->FirstChildElement();
+    XMLElement *currentCategoryFils = nameCategory->FirstChildElement();
     // Parcourir tous les frères de la catégorie <currentCategoryFils>.
-    while (currentCategoryFils != nullptr){
+    while (currentCategoryFils != nullptr) {
         // On compte chaque frère supplémentaire.
         nb++;
         // Avancer au frère suivant de currentCategoryFils.
@@ -125,19 +125,18 @@ int Mondial::getNbElemCat(const string categoryName) {
 /*
  * A COMPLETER
  */
-XMLElement* Mondial::getCountryXmlelementFromNameRec(string countryName) const {
+XMLElement *Mondial::getCountryXmlelementFromNameRec(string countryName) const {
     /*
      * A COMPLETER
      */
     // supprimer à partir d'ici après complétion
-    if (countryName.empty()){
+    if (countryName.empty()) {
         return nullptr;
-    }
-    else{
+    } else {
         // Accéder à <countriescategory>, c'est un fils de l'élément mondial => <racineMondial> si il est trouvé dans le dictionnaire.
-        XMLElement* countriesCategory = racineMondial->FirstChildElement("countriescategory");
+        XMLElement *countriesCategory = racineMondial->FirstChildElement("countriescategory");
         // Premier fils (pays) de countriesCategory.
-        XMLElement* currentPays = countriesCategory->FirstChildElement();
+        XMLElement *currentPays = countriesCategory->FirstChildElement();
         return getCountryXmlelementFromNameRecWorker(currentPays, countryName);
     }
 }
@@ -145,15 +144,16 @@ XMLElement* Mondial::getCountryXmlelementFromNameRec(string countryName) const {
 /*
  * A COMPLETER
  */
-XMLElement* Mondial::getCountryXmlelementFromNameRecWorker(XMLElement* currentCountryElement, string countryName) const {
+XMLElement *
+Mondial::getCountryXmlelementFromNameRecWorker(XMLElement *currentCountryElement, string countryName) const {
     // Si on arrive au bout (pays n'est pas trouvé dans la liste.)
     // nullptr permet de s'arreter
-    if (currentCountryElement == nullptr){
+    if (currentCountryElement == nullptr) {
         return nullptr;
     }
     // supprimer à partir d'ici après complétion
     // Si le fils 'Name' du pays n'est pas égale à celle de countryName alors relancer avec le frère.
-    if (currentCountryElement->FirstChildElement("name")->GetText() != countryName){
+    if (currentCountryElement->FirstChildElement("name")->GetText() != countryName) {
         return getCountryXmlelementFromNameRecWorker(currentCountryElement->NextSiblingElement(), countryName);
     } else {
         // Stop la récursivité, on a trouvé le pays.
@@ -165,11 +165,11 @@ XMLElement* Mondial::getCountryXmlelementFromNameRecWorker(XMLElement* currentCo
 /*
  * A COMPLETER
  */
-string Mondial::getCountryCodeFromName(string countryName) const throw (PrecondVioleeExcep) {
+string Mondial::getCountryCodeFromName(string countryName) const throw(PrecondVioleeExcep) {
     // Création de la variable paysCible et appel de la méthode.
-    XMLElement* paysCible = getCountryXmlelementFromNameRec(countryName);
+    XMLElement *paysCible = getCountryXmlelementFromNameRec(countryName);
     // Si le pays n'est pas trouvé.
-    if (paysCible == nullptr){
+    if (paysCible == nullptr) {
         throw PrecondVioleeExcep("Aucun pays donnée / trouvé");
     } else {
         // Sinon on retourne son attribut 'car_code'.
@@ -185,18 +185,19 @@ string Mondial::getCountryCodeFromName(string countryName) const throw (PrecondV
  * @param countryName
  * @return pointeur sur l'élément <country> dont la valeur du fils <name> est égal à countryName, nullprt sinon
  */
-XMLElement* Mondial::getCountryXmlelementFromNameIter(string countryName) const {
+XMLElement *Mondial::getCountryXmlelementFromNameIter(string countryName) const {
 
-    if (countryName.empty()){
+    if (countryName.empty()) {
         return nullptr;
     }
     // Accéder à la catégorie des pays pour ensuite la parcourir
-    XMLElement * nameCategory = racineMondial->FirstChildElement("countriescategory");
+    XMLElement *nameCategory = racineMondial->FirstChildElement("countriescategory");
     // Accéder au premier fils de la catégorie demandé <currentCategoryFils>.
-    XMLElement * currentPays = nameCategory->FirstChildElement();
+    XMLElement *currentPays = nameCategory->FirstChildElement();
     // Parcourir tous les frères de la catégorie <currentCategoryFils>.
     // Si toutefois aucun pays n'est retenus, sortir de la boucle (On vérifie en premier le pointeur).
-    while (currentPays != nullptr && currentPays->FirstChildElement("name")->GetText() != countryName){ // tq on ne trouve pas à l'attribut 'name', 'name' == countryName
+    while (currentPays != nullptr && currentPays->FirstChildElement("name")->GetText() !=
+                                     countryName) { // tq on ne trouve pas à l'attribut 'name', 'name' == countryName
         // Avancer au frère suivant de currentCategoryFils.
         currentPays = currentPays->NextSiblingElement();
     }
@@ -209,12 +210,12 @@ XMLElement* Mondial::getCountryXmlelementFromNameIter(string countryName) const 
  */
 int Mondial::getCountryPopulationFromName(string countryName) const {
     // Recherche du pays ciblé.
-    XMLElement * paysCible = getCountryXmlelementFromNameIter(countryName);
+    XMLElement *paysCible = getCountryXmlelementFromNameIter(countryName);
 
-    if (paysCible == nullptr){
+    if (paysCible == nullptr) {
         return -1;
 
-    } else if (paysCible->FirstChildElement("population") == nullptr){
+    } else if (paysCible->FirstChildElement("population") == nullptr) {
         return 0;
 
     } else {
@@ -252,14 +253,15 @@ int Mondial::getCountryPopulationFromName(string countryName) const {
 /*
  * A COMPLETER
  */
-XMLElement* Mondial::getCountryXmlelementFromCode(string countryCode) const {
+XMLElement *Mondial::getCountryXmlelementFromCode(string countryCode) const {
     // Accéder à la catégorie des pays pour ensuite la parcourir
-    XMLElement * nameCategory = racineMondial->FirstChildElement("countriescategory");
+    XMLElement *nameCategory = racineMondial->FirstChildElement("countriescategory");
     // Accéder au premier fils de la catégorie demandé <currentCategoryFils>.
-    XMLElement * currentPays = nameCategory->FirstChildElement();
+    XMLElement *currentPays = nameCategory->FirstChildElement();
     // Parcourir tous les frères de la catégorie <currentCategoryFils>.
     // Si toutefois aucun pays n'est retenus, sortir de la boucle (On vérifie en premier le pointeur).
-    while (currentPays != nullptr && currentPays->Attribute("car_code") != countryCode){ // tq on ne trouve pas à l'attribut 'car_code', 'car_code' == countryCode
+    while (currentPays != nullptr && currentPays->Attribute("car_code") !=
+                                     countryCode) { // tq on ne trouve pas à l'attribut 'car_code', 'car_code' == countryCode
         // Avancer au frère suivant de currentCategoryFils.
         currentPays = currentPays->NextSiblingElement();
     }
@@ -271,30 +273,27 @@ XMLElement* Mondial::getCountryXmlelementFromCode(string countryCode) const {
  * A COMPLETER
  */
 void Mondial::printCountryBorders(string countryName) const {
-    /*
-     * A TODO: prendre l'attribut "border" pour frontière.
-     */
     // Appel à une méthode déjà implémenter auparavant pour chercher le pays souhaité.
-    XMLElement * paysCible = getCountryXmlelementFromNameIter(countryName);
+    XMLElement *paysCible = getCountryXmlelementFromNameIter(countryName);
     // Je cherche si ce pays existe
-    if (paysCible == nullptr){
+    if (paysCible == nullptr) {
         cout << "Ce pays n'existe pas dans les données !" << endl;
-    } else if (paysCible->FirstChildElement("border") == nullptr){ // Si un pays à au moins un pays frontalier.
+    } else if (paysCible->FirstChildElement("border") == nullptr) { // Si un pays à au moins un pays frontalier.
         cout << "Ce pays ne contient pas de pays frontalier !" << endl;
     } else {
 
         // Accéder au premier fils de la catégorie demandé <border> soit pays frontalier.
-        XMLElement * currentBoder = paysCible->FirstChildElement("border");
+        XMLElement *currentBoder = paysCible->FirstChildElement("border");
         // Affichage du nom du pays ciblé.
         cout << "Pays " << paysCible->FirstChildElement("name")->GetText() << " : " << endl;
         // Parcourir tous les frères de la catégorie <border>.
         // Itéré sur chaque pays frontalier, et afficher son pays ainsi que la longueur de sa frontière.
-        while (currentBoder != nullptr){
+        while (currentBoder != nullptr) {
             // On passe le "car_code" de chaque pays frontalier à la méthode
-            XMLElement * paysFrontalier = getCountryXmlelementFromCode(currentBoder->Attribute("country"));
+            XMLElement *paysFrontalier = getCountryXmlelementFromCode(currentBoder->Attribute("country"));
             // Afficher le nom du pays frontalier ainsi que sa longueur.
             cout << " Frontière : " << paysFrontalier->FirstChildElement("name")->GetText()
-                 << " Longueur : "  <<  currentBoder->Attribute("length") << endl;
+                 << " Longueur : " << currentBoder->Attribute("length") << endl;
             // Avancer au frère suivant de <border> ! pas d'autres tags disponibles.
             currentBoder = currentBoder->NextSiblingElement("border");
         }
@@ -305,7 +304,7 @@ void Mondial::printCountryBorders(string countryName) const {
 /*
  * A COMPLETER
  */
-XMLElement* Mondial::getRiverXmlelementFromNameIter(string riverName) const {
+XMLElement *Mondial::getRiverXmlelementFromNameIter(string riverName) const {
     if (riverName.empty()) {
         return nullptr;
     } else {
@@ -330,6 +329,7 @@ XMLElement* Mondial::getRiverXmlelementFromNameIter(string riverName) const {
         return currentRiver;
     }
 }
+
 /*
  * A COMPLETER
  */
@@ -338,28 +338,20 @@ void Mondial::printAllCountriesCrossedByRiver(string riverName) const {
      * A COMPLETER
      */
     // On prend le fleuve demandé
-    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
-    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+    XMLElement *riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr) { // Si ce fleuve n'est pas trouvé
         cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
     } else {
         cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
-                                      << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
+             << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
         // On prend tous les pays traversés par le fleuve
         string countries = riverCible->Attribute("country");
-        // On transtype le string en un ptr de char. (char *)
-        char * riverNameChar = new char[countries.length()+1]; // +1 pour \0 à la fin du tableau de caractère.
-        // On affecte dans le tableau de caractère vide les pays traversés par le fleuve.
-        strcpy(riverNameChar, countries.c_str());
-        // Délimiteur 'bar espace'.
-        const char * delimiter = " ";
-        // On modifie le string originel en remplacent les espaces par des \0.
-        char * currentWords = strtok(riverNameChar, delimiter);
+        // list de pays séparé par les espaces
+        vector<string> countryVect = split(countries, ' ');
         // Pour chaque mots dans le string on va chercher son pays et afficher sont nom
-        while (currentWords != nullptr) {
-            XMLElement * currentPaysFleuve = getCountryXmlelementFromCode(currentWords);
+        for (string paysCode: countryVect) {
+            XMLElement *currentPaysFleuve = getCountryXmlelementFromCode(paysCode);
             cout << currentPaysFleuve->FirstChildElement("name")->GetText() << endl;
-
-            currentWords = strtok(nullptr, delimiter); // Passe au prochain mots
         }
 
     }
@@ -370,21 +362,21 @@ void Mondial::printAllCountriesCrossedByRiver(string riverName) const {
  */
 void Mondial::printCountriesWithProvincesCrossedByRiver(string riverName) const {
     // On prend le fleuve demandé
-    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
-    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+    XMLElement *riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr) { // Si ce fleuve n'est pas trouvé
         cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
     } else {
         cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
              << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
         // On prend le 1er élément de la série <located>
-        XMLElement * currentLocated = riverCible->FirstChildElement("located");
+        XMLElement *currentLocated = riverCible->FirstChildElement("located");
         // Si le fleuve ne traverse aucun pays.
-        if (currentLocated == nullptr){
+        if (currentLocated == nullptr) {
             cout << "Ce fleuve ne traverse aucun pays." << endl;
         } else {
-            while (currentLocated != nullptr){
+            while (currentLocated != nullptr) {
                 // Cherché le pays provenant du car_code de <country> contenu dans le <located> où on est à ce moment.
-                XMLElement * currentPaysLocated = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
+                XMLElement *currentPaysLocated = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
                 cout << currentPaysLocated->FirstChildElement("name")->GetText() << endl;
                 // On passe au prochain
                 currentLocated = currentLocated->NextSiblingElement("located");
@@ -401,52 +393,88 @@ void Mondial::printCountriesAndProvincesCrossedByRiver(string riverName) const {
      * A COMPLETER
      */
     // On prend le fleuve demandé
-    XMLElement * riverCible = getRiverXmlelementFromNameIter(riverName);
-    if (riverCible == nullptr){ // Si ce fleuve n'est pas trouvé
+    XMLElement *riverCible = getRiverXmlelementFromNameIter(riverName);
+    if (riverCible == nullptr) { // Si ce fleuve n'est pas trouvé
         cout << "Aucune rivière/fleuve rentrée ou aucune rivière/fleuve de ce nom dans nos données !" << endl;
+    } else if (riverCible->Attribute("country") == nullptr) { // Si ce fleuve ne traverse aucun pays
+        cout << "Ce fleuve ne traverse aucun pays" << endl;
     } else {
         cout << "Longueur du fleuve " << riverCible->FirstChildElement("name")->GetText()
              << " : " << riverCible->FirstChildElement("length")->GetText() << endl;
+
+        // On prend tous les pays traversés par le fleuve
+        string countries = riverCible->Attribute("country");
+        // list de pays séparé par les espaces
+        vector<string> countryVect = split(countries, ' ');
+        // Faire un dictionnaire des paysCode avec leurs provinces :
+        map<string, string> dicoPaysCodeWithProvinces;
         // On prend le 1er élément de la série <located>
-        XMLElement * currentLocated = riverCible->FirstChildElement("located");
-        // Si le fleuve ne traverse aucun pays.
-        if (currentLocated == nullptr){
-            cout << "Ce fleuve ne traverse aucun pays." << endl;
-        } else {
-            while (currentLocated != nullptr){
-                // Cherché le pays provenant du car_code de <country> contenu dans le <located> où on est à ce moment.
-                XMLElement * currentPaysLocated = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
-                cout << currentPaysLocated->FirstChildElement("name")->GetText() << endl;
-                     //<< "\t Province traversé par le fleuve : " << currentLocated->Attribute("province") << endl;
+        XMLElement *currentLocated = riverCible->FirstChildElement("located");
+        while (currentLocated != nullptr) {
+            dicoPaysCodeWithProvinces[currentLocated->Attribute("country")] = currentLocated->Attribute("province");
+            // On passe au prochain
+            currentLocated = currentLocated->NextSiblingElement("located");
+        }
 
-
-                // On prend tous les pays traversés par le fleuve
-                string provinces = currentLocated->Attribute("province");
-                // On transtype le string en un ptr de char. (char *)
-                char * provinceChar = new char[provinces.length()+1]; // +1 pour \0 à la fin du tableau de caractère.
-                // On affecte dans le tableau de caractère vide les pays traversés par le fleuve.
-                strcpy(provinceChar, provinces.c_str());
-                // Délimiteur 'bar espace'.
-                const char * delimiter = " ";
-                // On modifie le string originel en remplacent les espaces par des \0.
-                char * currentProvince = strtok(provinceChar, delimiter);
-                // Pour chaque province on va chercher s'il est traversé par le fleuve
+        // Pour chaque mot dans le string, on va chercher son pays et afficher son nom
+        for (string paysCode: countryVect) {
+            // on affiche son nom de pays
+            // car_code du mot en cours ----> Pays en cours
+            XMLElement *currentPaysFleuve = getCountryXmlelementFromCode(paysCode);
+            cout << currentPaysFleuve->FirstChildElement("name")->GetText() << endl;
+            // S'il est dans le dico (il a donc des provinces).
+            if (dicoPaysCodeWithProvinces.find(paysCode) != dicoPaysCodeWithProvinces.end()) {
+                // list de province séparée par les espaces
+                vector<string> provinceVect = split(dicoPaysCodeWithProvinces[paysCode], ' ');
+                // 2ème dictionnaire pour stocker toutes les clés = provinces, valeur = nom (de ces provinces).
+                map<string, string> dicoProvinceName;
+                // On itère pour stocker une fois toutes les provinces d'un pays.
+                XMLElement * currentProvince = currentPaysFleuve->FirstChildElement(
+                        "province");
                 while (currentProvince != nullptr) {
-                    // Cherche le pays d'un <located> via car_code
-                    XMLElement * currentPaysFromProvinceFleuve = getCountryXmlelementFromCode(currentLocated->Attribute("country"));
-                    XMLElement * currentProvinceFromPays = currentPaysFromProvinceFleuve->FirstChildElement("province");
-                   while (currentProvinceFromPays != nullptr){
-                        if (strcmp(currentProvinceFromPays->Attribute("id"), currentProvince) == 0){
-                            cout << "\t ->Province traversé par le fleuve : " << currentProvinceFromPays->Attribute("id") << endl;
-                        }
-                        currentProvinceFromPays = currentProvinceFromPays->NextSiblingElement("province");
-                    }
-                   currentProvince = strtok(nullptr, delimiter); // Passe à la prochaine province
+                    // Enregistre dans la map ---> clé [id_province]; valeur [name_province].
+                    dicoProvinceName[currentProvince->Attribute("id")] = currentProvince->FirstChildElement("name")->GetText();
+                    // On avance de tag <province>
+                    currentProvince = currentProvince->NextSiblingElement("province");
                 }
-                // On passe au prochain
-                currentLocated = currentLocated->NextSiblingElement("located");
+
+                // Pour chacune des provinces prendre son nom
+                for (string province: provinceVect) {
+                    // Afficher le code le nom de chaque province de se pays.
+                    cout << "\t - " << dicoProvinceName[province] << endl;
+                }
+
             }
         }
+
+        /*        for (string paysCode: countryVect) {
+        // on affiche son nom de pays
+        // car_code du mot en cours ----> Pays en cours
+        XMLElement *currentPaysFleuve = getCountryXmlelementFromCode(paysCode);
+        cout << currentPaysFleuve->FirstChildElement("name")->GetText() << endl;
+        // S'il est dans le dico (il a donc des provinces).
+        if (dicoPaysCodeWithProvinces.find(paysCode) != dicoPaysCodeWithProvinces.end()) {
+            // list de province séparée par les espaces
+            vector<string> provinceVect = split(dicoPaysCodeWithProvinces[paysCode], ' ');
+                // 2ème dictionnaire pour stocker toutes les clés = provinces, valeur = nom (de ces provinces).
+                map<string, string> dicoProvinceName;
+            // Pour chacune des provinces prendre son nom
+            for (string province: provinceVect) {
+                // On commence par le premier élément <province> du pays
+                XMLElement *currentProvince = currentPaysFleuve->FirstChildElement(
+                        "province"); // conversion de string province --> const char *.
+                while (currentProvince != nullptr) {
+                    // Si la province est trouvée dans le pays
+                    if (currentProvince->Attribute("id") == province) {
+                        // On affiche son nom
+                        cout << "\t - " << currentProvince->FirstChildElement("name")->GetText() << endl;
+                    }
+                    currentProvince = currentProvince->NextSiblingElement("province");
+                }
+
+            }
+        }*/
+
     }
 }
 
@@ -475,7 +503,7 @@ void Mondial::printIslandsInformations() const {
  */
 
 template<typename Out>
-void Mondial::split(string& s, char delim, Out result) const {
+void Mondial::split(string &s, char delim, Out result) const {
     stringstream ss(s);
     string item;
     while (getline(ss, item, delim)) {
@@ -490,7 +518,7 @@ void Mondial::split(string& s, char delim, Out result) const {
  * @param delim délimiteur des mots de la chaîne à découper
  * @return vecteur contenant les mots de la chaîne découpée
  */
-vector<std::string> Mondial::split(string& s, char delim) const {
+vector<std::string> Mondial::split(string &s, char delim) const {
     vector<std::string> elems;
     split(s, delim, back_inserter(elems));
     return elems;
