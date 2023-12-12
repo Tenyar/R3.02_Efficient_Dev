@@ -416,24 +416,25 @@ void Mondial::printCountriesAndProvincesCrossedByRiver(string riverName) const {
             currentLocated = currentLocated->NextSiblingElement("located");
         }
 
-        // Pour chaque mot dans le string, on va chercher son pays et afficher son nom
+        // Pour chaque mot (car_code/code du pays) dans le string, on va chercher son pays et afficher son nom.
         for (string paysCode: countryVect) {
-            // on affiche son nom de pays
-            // car_code du mot en cours ----> Pays en cours
+            // On affiche son nom de pays.
+            // On prend le car_code du pays en cours pour trouver son tag <country>.
             XMLElement *currentPaysFleuve = getCountryXmlelementFromCode(paysCode);
             cout << currentPaysFleuve->FirstChildElement("name")->GetText() << endl;
             // S'il est dans le dico (il a donc des provinces).
             if (dicoPaysCodeWithProvinces.find(paysCode) != dicoPaysCodeWithProvinces.end()) {
-                // list de province séparée par les espaces
+                // list de province séparée par les espaces.
                 vector<string> provinceVect = split(dicoPaysCodeWithProvinces[paysCode], ' ');
                 // 2ème dictionnaire pour stocker toutes les clés = provinces, valeur = nom (de ces provinces).
                 map<string, string> dicoProvinceName;
                 // On itère pour stocker une fois toutes les provinces d'un pays.
-                XMLElement * currentProvince = currentPaysFleuve->FirstChildElement(
+                XMLElement *currentProvince = currentPaysFleuve->FirstChildElement(
                         "province");
                 while (currentProvince != nullptr) {
                     // Enregistre dans la map ---> clé [id_province]; valeur [name_province].
-                    dicoProvinceName[currentProvince->Attribute("id")] = currentProvince->FirstChildElement("name")->GetText();
+                    dicoProvinceName[currentProvince->Attribute("id")] = currentProvince->FirstChildElement(
+                            "name")->GetText();
                     // On avance de tag <province>
                     currentProvince = currentProvince->NextSiblingElement("province");
                 }
@@ -485,6 +486,80 @@ void Mondial::printCityInformation(string cityName) const {
     /*
      * A COMPLETER
      */
+    if (cityName.empty()) {
+        cout << "Aucun nom de ville rentrée !" << endl;
+    } else {
+        // Accéder à la categorie des pays.
+        XMLElement *nameCategory = racineMondial->FirstChildElement("countriescategory");
+        // Accéder au premier fils de la catégorie demandé <currentCategoryFils>.
+        XMLElement *currentPays = nameCategory->FirstChildElement();
+        // Parcourir tous les frères de la catégorie <countries>.
+        // On cherche le pays avec le nom de la ville.
+        bool paysTrouver = false;
+        while (currentPays != nullptr && !paysTrouver) {
+            // Reset du boolean pour chaque pays
+            paysTrouver = false;
+            // Récupération de l'élément <province>.
+            XMLElement *currentProvince = currentPays->FirstChildElement("province");
+            // Si le pays contient des provinces.
+            if (currentProvince != nullptr) {
+                // Parcourir toutes les provinces et voir dans leur tag <city> le tag <name>.
+                // Pas de dico ici, car nous avons besoin de parcourir une seul fois toutes les provinces pour chaque pays.
+                while (currentProvince != nullptr && !paysTrouver) {
+                    XMLElement *currentCity = currentProvince->FirstChildElement("city");
+                    // Parcourir toutes les villes de chaques provinces
+                    while (currentCity != nullptr && !paysTrouver) {
+                        if (currentCity->FirstChildElement("name")->GetText() == cityName) {
+                            // Le pays contenant la ville a été trouvé.
+                            paysTrouver = true;
+                            cout << "La Ville : " << currentCity->FirstChildElement("name")->GetText() << endl
+                                 << "\t - Se trouve dans le pays : "
+                                 << currentPays->FirstChildElement("name")->GetText() << endl
+                                 << "\t -  dans la division adminstrative : " << currentProvince->Attribute("id")
+                                 << endl
+                                 << "\t - sa latitude est : " << currentCity->FirstChildElement("latitude")->GetText()
+                                 << endl
+                                 << "\t - sa longitude est : " << currentCity->FirstChildElement("longitude")->GetText()
+                                 << endl
+                                 << "\t - son altitude est : " << currentCity->FirstChildElement("elevation")->GetText()
+                                 << endl
+                                 << "\t - sa population est : "
+                                 << currentProvince->LastChildElement("population")->GetText() << endl;
+                        }
+                        currentCity = currentCity->NextSiblingElement("city");
+                    }
+                    // Avancer à la province suivante.
+                    currentProvince = currentProvince->NextSiblingElement("province");
+                }
+            } else { // Si le pays ne contient pas de province, regarder juste ses tags <city> et non <province>.
+                XMLElement *currentCity = currentPays->FirstChildElement("city");
+                // Parcourir toutes les villes de chaques pays
+                while (currentCity != nullptr && !paysTrouver) {
+                    if (currentCity->FirstChildElement("name")->GetText() == cityName) {
+                        // Le pays contenant la ville a été trouvé.
+                        paysTrouver = true;
+                        cout << "La Ville : " << currentCity->FirstChildElement("name")->GetText() << endl
+                             << "\t - Se trouve dans le pays : " << currentPays->FirstChildElement("name")->GetText()
+                             << endl
+                             << "\t - sa latitude est : " << currentCity->FirstChildElement("latitude")->GetText()
+                             << endl
+                             << "\t - sa longitude est : " << currentCity->FirstChildElement("longitude")->GetText()
+                             << endl
+                             << "\t - son altitude est : " << currentCity->FirstChildElement("elevation")->GetText()
+                             << endl
+                             << "\t - sa population est : " << currentCity->LastChildElement("population")->GetText()
+                             << endl;
+                    }
+                    currentCity = currentCity->NextSiblingElement("city");
+                }
+            }
+            // Avancer au pays suivant (frère du pays courant).
+            currentPays = currentPays->NextSiblingElement("country");
+        }
+        if (currentPays == nullptr) {
+            cout << "La ville " << cityName << ", n'existe pas !" << endl;
+        }
+    }
 }
 
 /**
