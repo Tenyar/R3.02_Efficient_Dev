@@ -515,7 +515,7 @@ void Mondial::printCityInformation(string cityName) const {
                             cout << "La Ville : " << currentCity->FirstChildElement("name")->GetText() << endl
                                  << "\t - Se trouve dans le pays : "
                                  << currentPays->FirstChildElement("name")->GetText() << endl
-                                 << "\t -  dans la division adminstrative : " << currentProvince->Attribute("id")
+                                 << "\t - dans la division administrative : " << currentProvince->Attribute("id")
                                  << endl
                                  << "\t - sa latitude est : " << currentCity->FirstChildElement("latitude")->GetText()
                                  << endl
